@@ -1,0 +1,50 @@
+:root {
+  --rows-per-rect: 10;
+  --cols-per-rect: 26;
+  --color-dark-gray: #333;
+  --color-black: #000;
+  --color-white: #fff;
+  --rect-gap: 5px;
+  --week-gap: 2px;
+  --week-size: 6px;
+}
+
+@page {
+  size: a4 portrait;
+}
+
+@media print {
+  .week-cell {
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+body {
+  margin: 5px;
+}
+
+#calendar {
+  display: grid;
+  grid-gap: var(--rect-gap);
+  grid-template-columns: repeat(2, auto);
+  width: 90vw;
+}
+
+@media screen {
+  #calendar {
+    justify-content: left;
+    margin: 0;
+  }
+}
+
+.rect-container {
+  display: grid;
+  grid-gap: var(--week-gap);
+  grid-template-columns: repeat(var(--cols-per-rect), auto);
+}
+
+.week-cell {
+  border: 1px solid var(--color-dark-gray);
+  height: var(--week-size);
+  width: var(--week-size);
+}
