@@ -2,33 +2,71 @@
   --rows-per-rect: 10;
   --cols-per-rect: 26;
   --color-dark-gray: #333;
+  --color-light-gray: #ccc;
+  --color-lighter-gray: #e5e5e5;
   --color-green: #046307;
   --color-black: #000;
   --color-white: #fff;
+  --color-muted: #333;
   --rect-gap: 5px;
   --week-gap: 2px;
   --week-size: 6px;
+  --week-radius: 1px;
+  --page-margin: 24px;
+  --column-gap: 40px;
+  --panel-gap: 36px;
+  --panel-width: 520px;
+  --layout-width: 1180px;
 }
 
 @page {
   size: a4 portrait;
 }
 
-@media print {
-  .week-cell {
-    -webkit-print-color-adjust: exact;
-  }
+body {
+  margin: 0;
+  color: var(--color-black);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
 }
 
-body {
-  margin: 5px;
+#layout {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--column-gap);
+  grid-template-columns: 1fr 1fr;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  max-width: var(--layout-width);
+  padding: var(--page-margin);
+}
+
+#calendar-pane {
+  display: flex;
+  align-items: center;
+  align-items: safe center;
+  justify-content: center;
+  justify-content: safe center;
+  overflow: auto;
+}
+
+#panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--panel-gap);
+  margin: 0 auto;
+  max-width: var(--panel-width);
+  overflow: auto;
+  width: 100%;
 }
 
 #calendar {
   display: grid;
   grid-gap: var(--rect-gap);
   grid-template-columns: repeat(2, auto);
-  width: 90vw;
+  width: max-content;
 }
 
 @media screen {
@@ -45,7 +83,123 @@ body {
 }
 
 .week-cell {
-  border: 1px solid var(--color-dark-gray);
+  border: 1px solid var(--color-light-gray);
+  border-radius: var(--week-radius);
   height: var(--week-size);
   width: var(--week-size);
+}
+
+#countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.stat {
+  background: var(--color-white);
+  border: 1px solid var(--color-lighter-gray);
+  border-radius: 6px;
+  padding: 18px 8px;
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  color: var(--color-green);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.stat-label {
+  display: block;
+  color: var(--color-muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+.target-date {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+#progress-track {
+  background: var(--color-lighter-gray);
+  border-radius: 2px;
+  height: 5px;
+  overflow: hidden;
+}
+
+#progress-fill {
+  background: var(--color-green);
+  height: 100%;
+  width: 0;
+}
+
+#progress-label {
+  color: var(--color-muted);
+  font-size: 11px;
+  margin: 10px 0 0;
+}
+
+#quote blockquote {
+  color: var(--color-green);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+#quote p {
+  color: var(--color-muted);
+  font-size: 11px;
+  margin: 8px 0 0;
+}
+
+@media (max-width: 1130px) {
+  #layout {
+    align-content: center;
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  #calendar-pane,
+  #panel {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 568px) {
+  :root {
+    --page-margin: 16px;
+    --week-gap: 1px;
+    --week-size: 3px;
+  }
+}
+
+@media print {
+  .week-cell {
+    -webkit-print-color-adjust: exact;
+  }
+
+  #layout {
+    display: block;
+    height: auto;
+    max-width: none;
+    padding: 0;
+  }
+
+  #calendar-pane {
+    display: block;
+    overflow: visible;
+  }
+
+  #panel {
+    display: none;
+  }
 }

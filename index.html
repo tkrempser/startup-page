@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <title>Memento Mori</title>
@@ -8,7 +8,45 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <div id="calendar"></div>
+    <main id="layout">
+      <section id="calendar-pane">
+        <div id="calendar"></div>
+      </section>
+
+      <section id="panel">
+        <div id="countdown">
+          <div class="stat">
+            <span class="stat-value" id="countdown-days">—</span>
+            <span class="stat-label">Dias</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="countdown-hours">—</span>
+            <span class="stat-label">Horas</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="countdown-minutes">—</span>
+            <span class="stat-label">Min</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="countdown-seconds">—</span>
+            <span class="stat-label">Seg</span>
+          </div>
+        </div>
+
+        <div id="target">
+          <p class="target-date" id="target-date"></p>
+          <div id="progress-track">
+            <div id="progress-fill"></div>
+          </div>
+          <p id="progress-label"></p>
+        </div>
+
+        <div id="quote">
+          <blockquote>"Continue."</blockquote>
+          <p>Cada dia importa.</p>
+        </div>
+      </section>
+    </main>
     <script src="script.js"></script>
   </body>
 </html>

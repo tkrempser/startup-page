@@ -4,8 +4,9 @@ let calendar = document.getElementById("calendar");
 const urlParams = new URLSearchParams(location.search);
 const date_birth = urlParams.get("dob") || "1984-01-01";
 const life_expectancy = urlParams.get("age") || "80";
-// Only highlighted on the default calendar, where the date is meaningful
 const highlighted_week = "2027-09-01";
+const progress_start = "2026-07-01";
+const progress_decimals = 6;
 const using_defaults = !urlParams.get("dob") && !urlParams.get("age");
 let numDecades = Math.floor(life_expectancy / 10);
 
@@ -17,10 +18,11 @@ if (using_defaults) {
     outline_week(weeks_since_birth(date_birth, parse_date(highlighted_week)));
 }
 
-/**
-* Fill every week, counting from the given bday
-* bday format: dd/mm/yyyy
-*/
+const target_date = parse_date(highlighted_week);
+
+render_target_date(target_date);
+start_countdown(target_date);
+
 function fill_calendar(bday) {
     let num_weeks = weeks_since_birth(bday, new Date());
 
@@ -29,43 +31,27 @@ function fill_calendar(bday) {
     }
 }
 
-/**
-* Parse a YYYY-MM-DD string into a Date
-*/
 function parse_date(date) {
-    // convert from dd/mm/yy to mm/dd/yy
-    let [year, month, day] = date.split("-");
-    return new Date(`${month}/${day}/${year}`);
+    const [year, month, day] = date.split("-").map(Number);
+    return new Date(year, month - 1, day);
 }
 
-/**
-* Week id holding the given date, counting from the given bday
-* bday format: dd/mm/yyyy
-*/
 function weeks_since_birth(bday, date) {
     let day_diff = (date - parse_date(bday)) / (1000 * 3600 * 24);
-
-    // 52*7 = 364: each year misses 1 day.
-    // adjusting this error
     let years = Math.floor(day_diff / 365);
     let remaining_weeks = Math.floor((day_diff % 365) / 7);
 
     return years * 26 * 2 + remaining_weeks;
 }
 
-/**
-* Fill week cell
-*/
 function paint_week(num) {
     const week = document.getElementById(`week-${num}`);
     if (week != null) {
+        week.style.borderColor = get_css_variable("--color-dark-gray");
         week.style.backgroundColor = get_css_variable("--color-dark-gray");
     }
 }
 
-/**
-* Highlight week cell
-*/
 function outline_week(num) {
     const week = document.getElementById(`week-${num}`);
     if (week != null) {
@@ -74,9 +60,6 @@ function outline_week(num) {
     }
 }
 
-/**
-* Set week IDs
-*/
 function set_ids(numDecades) {
     const weeks_per_year = cols_per_rect * 2;
     const weeks_per_decade = weeks_per_year * 10;
@@ -97,9 +80,6 @@ function set_ids(numDecades) {
     }
 }
 
-/**
-* Fill calendar with week cells
-*/
 function populate_calendar(numDecades) {
     for (let i = 0; i < numDecades; i++) {
         spawn_decade(i);
@@ -108,9 +88,6 @@ function populate_calendar(numDecades) {
     set_ids(numDecades);
 }
 
-/**
-* Instantiate 2 rectangles
-*/
 function spawn_decade(decade) {
     for (let i = 0; i < 2; i++) {
         const rect = spawn_rectangle(rows_per_rect, cols_per_rect);
@@ -119,9 +96,6 @@ function spawn_decade(decade) {
     }
 }
 
-/**
-* Smaller set of cells
-*/
 function spawn_rectangle(rows, cols) {
     const rect = document.createElement("div");
     rect.classList.add("rect-container");
@@ -134,18 +108,66 @@ function spawn_rectangle(rows, cols) {
     return rect;
 }
 
-/**
-* Cell: single week square
-*/
 function spawn_cell() {
     const div = document.createElement("div");
     div.classList.add("week-cell");
     return div;
 }
 
-/**
-* wrapper to get CSS variables
-*/
+function time_until(target) {
+    const seconds = Math.max(0, Math.floor((target - new Date()) / 1000));
+
+    return {
+        days: Math.floor(seconds / 86400),
+        hours: Math.floor(seconds / 3600) % 24,
+        minutes: Math.floor(seconds / 60) % 60,
+        seconds: seconds % 60,
+    };
+}
+
+function start_countdown(target) {
+    const tick = () => {
+        render_countdown(target);
+        render_progress(target);
+    };
+
+    tick();
+    setInterval(tick, 1000);
+}
+
+function render_countdown(target) {
+    const left = time_until(target);
+
+    document.getElementById("countdown-days").textContent = left.days;
+    document.getElementById("countdown-hours").textContent = left.hours;
+    document.getElementById("countdown-minutes").textContent = left.minutes;
+    document.getElementById("countdown-seconds").textContent = left.seconds;
+}
+
+function render_target_date(target) {
+    document.getElementById("target-date").textContent =
+        target.toLocaleDateString("pt-BR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+}
+
+function render_progress(target) {
+    const start = parse_date(progress_start);
+    const ratio = (new Date() - start) / (target - start);
+    const percent = Math.min(100, Math.max(0, ratio * 100));
+    const shown = percent.toLocaleString("pt-BR", {
+        minimumFractionDigits: progress_decimals,
+        maximumFractionDigits: progress_decimals,
+    });
+
+    document.getElementById("progress-fill").style.width = `${percent}%`;
+    document.getElementById(
+        "progress-label"
+    ).textContent = `Progresso · ${shown}%`;
+}
+
 function get_css_variable(name) {
     return getComputedStyle(document.documentElement).getPropertyValue(
         name
