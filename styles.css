@@ -11,7 +11,9 @@
   --rect-gap: 5px;
   --week-gap: 2px;
   --week-size: 6px;
-  --week-radius: 1px;
+  --week-radius: 0;
+  --tile-radius: 0;
+  --track-radius: 0;
   --page-margin: 24px;
   --column-gap: 40px;
   --panel-gap: 36px;
@@ -98,7 +100,7 @@ body {
 .stat {
   background: var(--color-white);
   border: 1px solid var(--color-lighter-gray);
-  border-radius: 6px;
+  border-radius: var(--tile-radius);
   padding: 18px 8px;
   text-align: center;
 }
@@ -129,7 +131,7 @@ body {
 
 #progress-track {
   background: var(--color-lighter-gray);
-  border-radius: 2px;
+  border-radius: var(--track-radius);
   height: 5px;
   overflow: hidden;
 }
